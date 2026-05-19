@@ -43,7 +43,7 @@ export default function SearchEngineApp() {
 
   const getPortfolioResults = () => {
     const q = query.toLowerCase();
-    const results = [];
+    const results: any[] = [];
 
     // Search Projects
     PROJECTS.forEach(p => {
