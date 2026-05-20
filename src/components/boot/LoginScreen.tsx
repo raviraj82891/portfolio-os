@@ -124,13 +124,17 @@ export default function LoginScreen() {
         transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
       >
         <div
-          className="w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold"
+          className="w-24 h-24 rounded-full overflow-hidden border-2"
           style={{
-            background: 'linear-gradient(135deg, #00d4ff, #bf00ff)',
-            boxShadow: '0 0 30px rgba(0,212,255,0.3), 0 0 60px rgba(191,0,255,0.2)',
+            borderColor: 'rgba(0, 212, 255, 0.4)',
+            boxShadow: '0 0 35px rgba(0,212,255,0.4), 0 0 70px rgba(191,0,255,0.25)',
           }}
         >
-          {PERSONAL.name.charAt(0)}
+          <img
+            src={PERSONAL.profilePhoto}
+            alt={PERSONAL.name}
+            className="w-full h-full object-cover select-none"
+          />
         </div>
       </motion.div>
 

@@ -19,7 +19,7 @@ export default function ContactApp() {
   };
 
   return (
-    <div className="h-full overflow-y-auto px-5 py-4" style={{ background: 'rgba(14,14,20,0.98)' }}>
+    <div className="h-full overflow-y-auto px-3 py-2" style={{ background: 'rgba(14,14,20,0.98)' }}>
       <motion.div className="max-w-md mx-auto" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-base font-bold mb-1 text-indigo-400" style={{ fontFamily: "'Outfit', sans-serif" }}>✉️ Get in Touch</h1>
         <p className="text-[11px] text-zinc-400 mb-4">Send a message to {PERSONAL.handle}</p>

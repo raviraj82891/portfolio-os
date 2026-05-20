@@ -88,12 +88,12 @@ export default function DesktopEnvironment() {
       {/* Particles */}
       <Particles />
 
-      {/* Desktop Icons — iOS-style grid layout */}
-      <div className="absolute top-4 left-4 grid grid-cols-1 gap-0 z-10">
+      {/* Desktop Icons — iOS-style vertical stack layout */}
+      <div className="absolute top-4 left-4 flex flex-col gap-0.5 z-10">
         {desktopIcons.map((icon, i) => (
           <motion.button
             key={icon.id}
-            className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-all w-[68px] group"
+            className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-all w-[68px] group"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.04 + 0.3, duration: 0.3 }}

@@ -113,7 +113,7 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       >
         {/* Title Bar — macOS-inspired with frosted glass */}
         <div
-          className="flex items-center justify-between px-4 py-2.5 cursor-grab active:cursor-grabbing select-none shrink-0"
+          className="flex items-center justify-between px-4 py-1.5 cursor-grab active:cursor-grabbing select-none shrink-0"
           style={{
             background: 'linear-gradient(180deg, rgba(40, 40, 52, 0.6) 0%, rgba(28, 28, 38, 0.4) 100%)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.05)',

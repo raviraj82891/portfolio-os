@@ -1,37 +1,142 @@
 'use client';
 
+import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { SKILLS } from '@/data/portfolio';
 
-const catIcons: Record<string, string> = { frontend: '🎨', backend: '⚙️', languages: '💻', cyberSecurity: '🔒', gameEngines: '🎮', tools: '🛠️' };
-const catColors: Record<string, string> = { frontend: '#6366f1', backend: '#22c55e', languages: '#8b5cf6', cyberSecurity: '#f43f5e', gameEngines: '#f59e0b', tools: '#14b8a6' };
+const catIcons: Record<string, string> = { 
+  frontend: '🎨', 
+  backend: '⚙️', 
+  languages: '💻', 
+  cyberSecurity: '🔒', 
+  gameEngines: '🎮', 
+  tools: '🛠️' 
+};
+
+const catColors: Record<string, string> = { 
+  frontend: '#6366f1', 
+  backend: '#22c55e', 
+  languages: '#8b5cf6', 
+  cyberSecurity: '#f43f5e', 
+  gameEngines: '#f59e0b', 
+  tools: '#14b8a6' 
+};
+
+// Deterministic helper to generate a stable skill percentage (74% - 98%)
+// This prevents random flickering/jumps on state updates or window focuses.
+function getDeterministicLevel(skillName: string): number {
+  let hash = 0;
+  for (let i = 0; i < skillName.length; i++) {
+    hash = skillName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const variance = Math.abs(hash) % 25; // 0 to 24
+  return 74 + variance; // 74% to 98%
+}
 
 export default function SkillsApp() {
   return (
-    <div className="h-full overflow-y-auto px-5 py-4" style={{ background: 'rgba(14,14,20,0.98)' }}>
-      <motion.h1 className="text-base font-bold mb-3 text-indigo-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ fontFamily: "'Outfit', sans-serif" }}>
-        ⚡ Skill Matrix
-      </motion.h1>
-      <div className="space-y-3">
+    <div 
+      className="h-full overflow-y-auto px-5 py-5 flex flex-col gap-4 text-zinc-200" 
+      style={{ 
+        background: 'radial-gradient(circle at 50% 0%, rgba(30, 27, 75, 0.12) 0%, rgba(14, 14, 20, 0.99) 80%)',
+        scrollbarWidth: 'thin',
+        scrollbarColor: 'rgba(255,255,255,0.1) transparent'
+      }}
+    >
+      {/* Header */}
+      <div className="mb-1">
+        <motion.h1 
+          className="text-base font-bold tracking-tight text-white flex items-center gap-2" 
+          initial={{ opacity: 0, y: -10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          style={{ fontFamily: "'Outfit', sans-serif" }}
+        >
+          <span>⚡</span> Skill Matrix & Proficiency
+        </motion.h1>
+        <motion.p 
+          className="text-[10px] text-zinc-500 mt-0.5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          Dynamic visualization of engineering capabilities and tools
+        </motion.p>
+      </div>
+
+      {/* Grid of Categories */}
+      <div className="space-y-4">
         {Object.entries(SKILLS).map(([category, skills], ci) => {
           const color = catColors[category] || '#6366f1';
+          const icon = catIcons[category] || '📦';
+          
           return (
-            <motion.div key={category} className="rounded-lg p-4" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: ci * 0.06 }}>
-              <div className="flex items-center gap-2 mb-2.5">
-                <span className="text-base">{catIcons[category] || '📦'}</span>
-                <h2 className="text-xs font-semibold uppercase tracking-wide" style={{ color }}>{category}</h2>
-                <div className="flex-1 h-px ml-1" style={{ background: `${color}18` }} />
+            <motion.div 
+              key={category} 
+              className="relative rounded-xl p-4 border border-white/5 bg-white/[0.01] backdrop-blur-md transition-all duration-300"
+              style={{
+                boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.01)'
+              }}
+              initial={{ opacity: 0, y: 12 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: ci * 0.04, ease: 'easeOut' }}
+              whileHover={{ 
+                borderColor: `${color}30`, 
+                background: 'rgba(255,255,255,0.02)',
+                boxShadow: `0 4px 20px rgba(0, 0, 0, 0.2), 0 0 15px ${color}08`
+              }}
+            >
+              {/* Category Header */}
+              <div className="flex items-center gap-2 mb-3.5">
+                <span className="text-sm">{icon}</span>
+                <h2 
+                  className="text-[10px] font-bold uppercase tracking-wider" 
+                  style={{ color, fontFamily: "'Outfit', sans-serif" }}
+                >
+                  {category}
+                </h2>
+                <div className="flex-1 h-px ml-2 bg-gradient-to-r" style={{ '--tw-gradient-from': `${color}25`, '--tw-gradient-to': 'transparent' } as React.CSSProperties} />
               </div>
-              <div className="space-y-1.5">
+
+              {/* Skills Progress List */}
+              <div className="space-y-2.5">
                 {(skills as string[]).map((skill, si) => {
-                  const level = 60 + Math.random() * 35;
+                  const level = getDeterministicLevel(skill);
+                  
                   return (
-                    <motion.div key={skill} className="flex items-center gap-2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: ci * 0.06 + si * 0.03 }}>
-                      <span className="text-[11px] text-zinc-400 w-24 truncate">{skill}</span>
-                      <div className="flex-1 h-1.5 bg-white/[0.04] rounded-full overflow-hidden">
-                        <motion.div className="h-full rounded-full" style={{ background: `linear-gradient(90deg, ${color}, ${color}88)` }} initial={{ width: 0 }} animate={{ width: `${level}%` }} transition={{ delay: ci * 0.06 + si * 0.03 + 0.2, duration: 0.6, ease: 'easeOut' }} />
+                    <motion.div 
+                      key={skill} 
+                      className="flex items-center gap-3 group/skill" 
+                      initial={{ opacity: 0 }} 
+                      animate={{ opacity: 1 }} 
+                      transition={{ delay: ci * 0.04 + si * 0.02 }}
+                    >
+                      {/* Skill Name */}
+                      <span className="text-[10px] font-medium text-zinc-400 group-hover/skill:text-zinc-200 transition-colors w-24 truncate">
+                        {skill}
+                      </span>
+                      
+                      {/* Progress Track */}
+                      <div className="flex-1 h-1.5 bg-white/[0.03] rounded-full overflow-hidden border border-white/[0.02] relative">
+                        <motion.div 
+                          className="h-full rounded-full absolute left-0 top-0" 
+                          style={{ 
+                            background: `linear-gradient(90deg, ${color}cc, ${color})`,
+                            boxShadow: `0 0 8px ${color}40`
+                          }} 
+                          initial={{ width: 0 }} 
+                          animate={{ width: `${level}%` }} 
+                          transition={{ 
+                            delay: ci * 0.04 + si * 0.02 + 0.15, 
+                            duration: 0.8, 
+                            ease: [0.25, 1, 0.5, 1] 
+                          }} 
+                        />
                       </div>
-                      <span className="text-[10px] text-zinc-500 w-7 text-right tabular-nums">{Math.round(level)}%</span>
+                      
+                      {/* Percentage Badge */}
+                      <span className="text-[9px] font-mono text-zinc-500 group-hover/skill:text-zinc-300 w-8 text-right tabular-nums transition-colors">
+                        {level}%
+                      </span>
                     </motion.div>
                   );
                 })}
