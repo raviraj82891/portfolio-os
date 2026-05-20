@@ -46,15 +46,14 @@ export default function SkillsApp() {
       {/* Header */}
       <div className="mb-1">
         <motion.h1 
-          className="text-base font-bold tracking-tight text-white flex items-center gap-2" 
+          className="type-heading flex items-center gap-2" 
           initial={{ opacity: 0, y: -10 }} 
           animate={{ opacity: 1, y: 0 }} 
-          style={{ fontFamily: "'Outfit', sans-serif" }}
         >
-          <span>⚡</span> Skill Matrix & Proficiency
+          <span>⚡</span> Skill Matrix
         </motion.h1>
         <motion.p 
-          className="text-[10px] text-zinc-500 mt-0.5"
+          className="type-caption mt-1"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
@@ -86,15 +85,15 @@ export default function SkillsApp() {
               }}
             >
               {/* Category Header */}
-              <div className="flex items-center gap-2 mb-3.5">
+              <div className="flex items-center gap-2 mb-4">
                 <span className="text-sm">{icon}</span>
                 <h2 
-                  className="text-[10px] font-bold uppercase tracking-wider" 
-                  style={{ color, fontFamily: "'Outfit', sans-serif" }}
+                  className="type-label" 
+                  style={{ color }}
                 >
                   {category}
                 </h2>
-                <div className="flex-1 h-px ml-2 bg-gradient-to-r" style={{ '--tw-gradient-from': `${color}25`, '--tw-gradient-to': 'transparent' } as React.CSSProperties} />
+                <div className="flex-1 h-px ml-2" style={{ background: `linear-gradient(90deg, ${color}30, transparent)` }} />
               </div>
 
               {/* Skills Progress List */}
@@ -111,12 +110,12 @@ export default function SkillsApp() {
                       transition={{ delay: ci * 0.04 + si * 0.02 }}
                     >
                       {/* Skill Name */}
-                      <span className="text-[10px] font-medium text-zinc-400 group-hover/skill:text-zinc-200 transition-colors w-24 truncate">
+                      <span className="type-body group-hover/skill:text-zinc-100 transition-colors w-24 truncate" style={{ fontSize: 'var(--type-xs)' }}>
                         {skill}
                       </span>
                       
                       {/* Progress Track */}
-                      <div className="flex-1 h-1.5 bg-white/[0.03] rounded-full overflow-hidden border border-white/[0.02] relative">
+                      <div className="flex-1 h-1.5 bg-white/[0.04] rounded-full overflow-hidden border border-white/[0.02] relative">
                         <motion.div 
                           className="h-full rounded-full absolute left-0 top-0" 
                           style={{ 
@@ -134,7 +133,7 @@ export default function SkillsApp() {
                       </div>
                       
                       {/* Percentage Badge */}
-                      <span className="text-[9px] font-mono text-zinc-500 group-hover/skill:text-zinc-300 w-8 text-right tabular-nums transition-colors">
+                      <span className="type-mono text-zinc-500 group-hover/skill:text-zinc-200 w-8 text-right tabular-nums transition-colors">
                         {level}%
                       </span>
                     </motion.div>

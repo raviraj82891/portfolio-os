@@ -49,15 +49,14 @@ export default function ProjectsApp() {
       <div className="flex items-center justify-between mb-1">
         <div>
           <motion.h1
-            className="text-base font-bold tracking-tight text-white flex items-center gap-2"
-            style={{ fontFamily: "'Outfit', sans-serif" }}
+            className="type-heading flex items-center gap-2"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <span className="text-lg">🚀</span> Projects Explorer
+            <span>🚀</span> Projects Explorer
           </motion.h1>
           <motion.p 
-            className="text-[10px] text-zinc-500 mt-0.5"
+            className="type-caption mt-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1 }}
@@ -67,7 +66,7 @@ export default function ProjectsApp() {
         </div>
 
         <motion.div 
-          className="px-2 py-0.5 rounded-full border text-[10px] font-mono border-white/5 bg-white/[0.02] text-zinc-400"
+          className="px-2.5 py-1 rounded-full border type-mono border-white/5 bg-white/[0.02] text-zinc-500"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
@@ -218,11 +217,11 @@ export default function ProjectsApp() {
                     )}
                   </div>
 
-                  <h3 className="text-xs font-bold text-white mb-2 tracking-tight group-hover:text-white transition-colors flex items-center gap-1.5">
+                  <h3 className="type-subheading text-white mb-2 group-hover:text-white transition-colors">
                     {project.title}
                   </h3>
                   
-                  <p className="text-[10px] text-zinc-400 group-hover:text-zinc-300 transition-colors mb-4 leading-relaxed font-light">
+                  <p className="type-body group-hover:text-zinc-300 transition-colors mb-4">
                     {project.description}
                   </p>
                 </div>
@@ -231,7 +230,7 @@ export default function ProjectsApp() {
                   {project.technologies.map(tech => (
                     <span 
                       key={tech} 
-                      className="px-2 py-0.5 text-[9px] font-mono rounded bg-white/[0.02] border border-white/[0.04] text-zinc-400 group-hover:text-zinc-300 group-hover:border-white/[0.07] transition-all"
+                      className="type-mono px-2 py-0.5 rounded bg-white/[0.02] border border-white/[0.04] group-hover:text-zinc-300 group-hover:border-white/[0.07] transition-all"
                     >
                       {tech}
                     </span>

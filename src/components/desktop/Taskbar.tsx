@@ -129,9 +129,8 @@ export default function Taskbar() {
             <button
               key={w.id}
               onClick={() => w.isMinimized ? restoreWindow(w.id) : focusWindow(w.id)}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all truncate max-w-[150px] ${
-                w.isMinimized ? 'opacity-40' : 'opacity-70 hover:opacity-100'
-              }`}
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all truncate max-w-[150px] ${w.isMinimized ? 'opacity-40' : 'opacity-70 hover:opacity-100'
+                }`}
               style={{
                 background: 'rgba(255,255,255,0.04)',
                 border: '1px solid rgba(255,255,255,0.05)',

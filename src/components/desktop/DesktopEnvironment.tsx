@@ -1,10 +1,11 @@
 'use client';
 
+import { useState, useEffect, useCallback } from 'react';
 import { useOS } from '@/store/useOS';
 import WindowFrame from './WindowFrame';
 import Taskbar from './Taskbar';
 import dynamic from 'next/dynamic';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import MatrixRain from '../effects/MatrixRain';
 import Particles from '../effects/Particles';
 
@@ -41,6 +42,22 @@ function getAppComponent(appId: string) {
 
 export default function DesktopEnvironment() {
   const { windows, crtEnabled, matrixMode, openWindow } = useOS();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Sync state with browser fullscreen changes (e.g. Esc key exit)
+  useEffect(() => {
+    const onFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(async () => {
+    if (!document.fullscreenElement) {
+      await document.documentElement.requestFullscreen();
+    } else {
+      await document.exitFullscreen();
+    }
+  }, []);
 
   const desktopIcons = [
     { id: 'terminal', label: 'Terminal', icon: '⌨️' },
@@ -58,7 +75,7 @@ export default function DesktopEnvironment() {
 
   return (
     <motion.div
-      className="fixed inset-0 ambient-bg"
+      className="fixed inset-0 ambient-bg overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
@@ -66,22 +83,29 @@ export default function DesktopEnvironment() {
       {/* Ambient Background Orbs — very subtle, balanced */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute w-[700px] h-[700px] rounded-full opacity-[0.04]"
+          className="absolute w-[800px] h-[800px] rounded-full opacity-[0.055]"
           style={{ background: 'radial-gradient(circle, #6366f1, transparent 70%)', top: '5%', right: '-15%' }}
           animate={{ x: [0, 25, 0], y: [0, -15, 0] }}
           transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
         />
         <motion.div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-[0.035]"
+          className="absolute w-[650px] h-[650px] rounded-full opacity-[0.042]"
           style={{ background: 'radial-gradient(circle, #8b5cf6, transparent 70%)', bottom: '10%', left: '-10%' }}
           animate={{ x: [0, -15, 0], y: [0, 20, 0] }}
           transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
         />
         <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.025]"
+          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.028]"
           style={{ background: 'radial-gradient(circle, #3b82f6, transparent 70%)', top: '45%', left: '40%' }}
           animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
           transition={{ duration: 22, repeat: Infinity, ease: 'linear' }}
+        />
+        {/* Edge vignette — reduces visual noise at screen borders */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(10,10,16,0.35) 100%)'
+          }}
         />
       </div>
 
@@ -93,28 +117,124 @@ export default function DesktopEnvironment() {
         {desktopIcons.map((icon, i) => (
           <motion.button
             key={icon.id}
-            className="flex flex-col items-center gap-0.5 p-1.5 rounded-xl hover:bg-white/[0.04] active:bg-white/[0.08] transition-all w-[68px] group"
+            className="flex flex-col items-center gap-1 p-1.5 rounded-xl hover:bg-white/[0.05] active:bg-white/[0.09] w-[64px] group cursor-pointer"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.04 + 0.3, duration: 0.3 }}
+            whileHover={{ scale: 1.09, y: -2 }}
+            whileTap={{ scale: 0.93 }}
+            transition={{
+              opacity: { delay: i * 0.04 + 0.3, duration: 0.3 },
+              y: { type: 'spring', stiffness: 400, damping: 15, delay: i * 0.04 + 0.3 },
+              scale: { type: 'spring', stiffness: 400, damping: 15 },
+            }}
             onDoubleClick={() => openWindow(icon.id, icon.label)}
           >
-            <span className="text-2xl group-hover:scale-105 transition-transform duration-200">
-              {icon.icon}
-            </span>
-            <span className="text-[9px] text-zinc-400 group-hover:text-zinc-200 truncate w-full text-center transition-colors duration-200">
+            <span className="text-2xl">{icon.icon}</span>
+            <span
+              className="type-caption truncate w-full text-center group-hover:text-zinc-200 transition-colors"
+              style={{ fontSize: 'var(--type-2xs)', lineHeight: '1.3' }}
+            >
               {icon.label}
             </span>
           </motion.button>
         ))}
       </div>
 
-      {/* Windows */}
-      {windows.map((win) => (
-        <WindowFrame key={win.id} window={win}>
-          {getAppComponent(win.appId)}
-        </WindowFrame>
-      ))}
+      {/* Fullscreen Toggle — top right corner */}
+      <motion.button
+        id="fullscreen-btn"
+        onClick={toggleFullscreen}
+        className="fixed top-3 right-3 z-[9500] flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer"
+        style={{
+          background: 'rgba(22, 22, 32, 0.72)',
+          backdropFilter: 'blur(20px) saturate(1.6)',
+          WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+        }}
+        whileHover={{
+          scale: 1.06,
+          background: 'rgba(99, 102, 241, 0.12)',
+          borderColor: 'rgba(99, 102, 241, 0.25)',
+        }}
+        whileTap={{ scale: 0.93 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 16 }}
+        title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Enter Fullscreen'}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {isFullscreen ? (
+            <motion.svg
+              key="compress"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-3.5 h-3.5 text-indigo-300"
+              initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 18 }}
+            >
+              {/* Compress icon */}
+              <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+              <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+              <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+              <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+            </motion.svg>
+          ) : (
+            <motion.svg
+              key="expand"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-3.5 h-3.5 text-zinc-400"
+              initial={{ opacity: 0, rotate: 90, scale: 0.7 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: -90, scale: 0.7 }}
+              transition={{ type: 'spring', stiffness: 380, damping: 18 }}
+            >
+              {/* Expand icon */}
+              <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+              <path d="M21 8V5a2 2 0 0 0-2-2h-3" />
+              <path d="M3 16v3a2 2 0 0 0 2 2h3" />
+              <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+            </motion.svg>
+          )}
+        </AnimatePresence>
+        <span
+          className="type-caption hidden sm:block"
+          style={{ fontSize: 'var(--type-2xs)', color: isFullscreen ? 'var(--accent-light)' : 'var(--text-tertiary)' }}
+        >
+          {isFullscreen ? 'Exit FS' : 'Fullscreen'}
+        </span>
+      </motion.button>
+
+      {/* Windows — hard-clipped to workspace (top → above taskbar).
+          clip-path: inset(0) is the only reliable way to clip GPU-composited
+          Framer Motion elements that escape overflow: hidden via their
+          compositing layer. contain: layout paint reinforces this. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          bottom: '52px',
+          overflow: 'hidden',
+          clipPath: 'inset(0 0 0 0)',
+          contain: 'layout paint',
+        }}
+      >
+        {windows.map((win) => (
+          <WindowFrame key={win.id} window={win}>
+            {getAppComponent(win.appId)}
+          </WindowFrame>
+        ))}
+      </div>
 
       {/* Taskbar */}
       <Taskbar />

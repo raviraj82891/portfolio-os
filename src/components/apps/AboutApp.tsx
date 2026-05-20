@@ -62,11 +62,11 @@ export default function AboutApp() {
           />
         </motion.div>
         <div>
-          <h1 className="text-base font-bold text-white tracking-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
+          <h1 className="type-heading">
             {PERSONAL.name}
           </h1>
-          <p className="text-indigo-400 text-xs font-semibold">{PERSONAL.title}</p>
-          <p className="text-zinc-500 text-[10px] font-light mt-0.5">📍 {PERSONAL.location} · 🎓 {PERSONAL.university}</p>
+          <p className="type-subheading text-indigo-400 mt-0.5">{PERSONAL.title}</p>
+          <p className="type-caption mt-1">📍 {PERSONAL.location} · 🎓 {PERSONAL.university}</p>
         </div>
       </motion.div>
 
@@ -100,8 +100,8 @@ export default function AboutApp() {
         animate={{ opacity: 1 }} 
         transition={{ delay: 0.1 }}
       >
-        <h2 className="text-[10px] font-bold text-indigo-400 mb-2 uppercase tracking-wider" style={{ fontFamily: "'Outfit', sans-serif" }}>About Me</h2>
-        <p className="text-zinc-300 text-xs leading-relaxed font-light">{PERSONAL.bio}</p>
+        <h2 className="type-label text-indigo-400 mb-2.5">About Me</h2>
+        <p className="type-body leading-relaxed">{PERSONAL.bio}</p>
       </motion.div>
 
       {/* Skills Matrix (Consistent Styling) */}
@@ -112,7 +112,7 @@ export default function AboutApp() {
         animate={{ opacity: 1 }} 
         transition={{ delay: 0.15 }}
       >
-        <h2 className="text-[10px] font-bold text-indigo-400 mb-3.5 uppercase tracking-wider" style={{ fontFamily: "'Outfit', sans-serif" }}>Skills Index</h2>
+        <h2 className="type-label text-indigo-400 mb-3.5">Skills Index</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {Object.entries(SKILLS).map(([category, skills]) => {
             const color = catColors[category] || '#6366f1';
@@ -124,7 +124,7 @@ export default function AboutApp() {
               >
                 <div className="flex items-center gap-1.5 mb-2.5">
                   <span className="text-xs">{icon}</span>
-                  <h3 className="text-[10px] font-bold uppercase tracking-wider" style={{ color, fontFamily: "'Outfit', sans-serif" }}>
+                  <h3 className="type-label" style={{ color }}>
                     {category}
                   </h3>
                 </div>
@@ -163,15 +163,15 @@ export default function AboutApp() {
         animate={{ opacity: 1 }} 
         transition={{ delay: 0.2 }}
       >
-        <h2 className="text-[10px] font-bold text-indigo-400 mb-2.5 uppercase tracking-wider" style={{ fontFamily: "'Outfit', sans-serif" }}>Academic Background</h2>
+        <h2 className="type-label text-indigo-400 mb-2.5">Academic Background</h2>
         <div className="space-y-2.5">
           {EDUCATION.map((edu, i) => (
             <div key={i} className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-white/[0.02] border border-transparent hover:border-white/[0.03] transition-all">
               <span className="text-base mt-0.5">{edu.icon}</span>
               <div>
-                <p className="text-xs text-white font-semibold leading-tight">{edu.degree}</p>
-                <p className="text-[10px] text-zinc-400 font-light mt-0.5">{edu.institution}</p>
-                <p className="text-[10px] text-zinc-500 font-mono mt-0.5">{edu.period}</p>
+                <p className="type-subheading text-white leading-tight">{edu.degree}</p>
+                <p className="type-body mt-0.5" style={{ fontSize: 'var(--type-xs)' }}>{edu.institution}</p>
+                <p className="type-mono mt-0.5" style={{ fontSize: 'var(--type-2xs)', color: 'var(--text-muted)' }}>{edu.period}</p>
               </div>
             </div>
           ))}
@@ -186,7 +186,7 @@ export default function AboutApp() {
         animate={{ opacity: 1 }} 
         transition={{ delay: 0.25 }}
       >
-        <h2 className="text-[10px] font-bold text-indigo-400 mb-3.5 uppercase tracking-wider" style={{ fontFamily: "'Outfit', sans-serif" }}>Certifications & Honors ({CERTIFICATIONS.length})</h2>
+        <h2 className="type-label text-indigo-400 mb-3.5">Certifications & Honors ({CERTIFICATIONS.length})</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {CERTIFICATIONS.map((cert, i) => (
             <motion.button
@@ -210,8 +210,8 @@ export default function AboutApp() {
                 />
               </div>
               <div className="p-2">
-                <p className="text-[9px] text-zinc-300 font-semibold leading-tight truncate">{cert.name}</p>
-                <p className="text-[8px] text-zinc-500 font-mono mt-0.5 truncate">{cert.issuer}</p>
+                <p className="type-mono text-zinc-200 leading-tight truncate" style={{ fontSize: 'var(--type-2xs)' }}>{cert.name}</p>
+                <p className="type-mono text-zinc-500 mt-0.5 truncate" style={{ fontSize: 'var(--type-2xs)' }}>{cert.issuer}</p>
               </div>
             </motion.button>
           ))}
