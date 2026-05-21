@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PERSONAL } from '@/data/portfolio';
+import emailjs from '@emailjs/browser';
 
 const CONTACT_LINKS = [
   {
@@ -41,11 +42,33 @@ export default function ContactApp() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('sending');
-    setTimeout(() => {
-      setStatus('success');
-      setFormData({ name: '', email: '', message: '' });
-      setTimeout(() => setStatus('idle'), 3500);
-    }, 1500);
+
+    const serviceId = 'service_oh2qqrl';
+    const templateId = 'template_95ilutz';
+    const publicKey = 'J0FNJ92QIkRVXK3BV';
+
+    const templateParams = {
+      name: formData.name,
+      from_name: formData.name,
+      email: formData.email,
+      from_email: formData.email,
+      message: formData.message,
+    };
+
+    emailjs
+      .send(serviceId, templateId, templateParams, publicKey)
+      .then(
+        () => {
+          setStatus('success');
+          setFormData({ name: '', email: '', message: '' });
+          setTimeout(() => setStatus('idle'), 3500);
+        },
+        (error) => {
+          console.error('EmailJS Error:', error);
+          setStatus('error');
+          setTimeout(() => setStatus('idle'), 5000);
+        }
+      );
   };
 
   const btnStyle = {
