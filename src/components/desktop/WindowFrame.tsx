@@ -18,6 +18,7 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
     focusWindow,
     moveWindow,
     activeWindowId,
+    resizeWindow,
   } = useOS();
 
   const isActive = activeWindowId === win.id;
@@ -120,6 +121,45 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       }, 50);
     }
     setHoverSnap('none');
+  };
+
+  const handleResizeStart = (e: React.PointerEvent, direction: 'e' | 's' | 'se') => {
+    e.preventDefault();
+    e.stopPropagation();
+    focusWindow(win.id);
+
+    const startWidth = win.width;
+    const startHeight = win.height;
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaY = moveEvent.clientY - startY;
+
+      const minWidth = 350;
+      const minHeight = 250;
+
+      let newWidth = startWidth;
+      let newHeight = startHeight;
+
+      if (direction === 'e' || direction === 'se') {
+        newWidth = Math.max(minWidth, startWidth + deltaX);
+      }
+      if (direction === 's' || direction === 'se') {
+        newHeight = Math.max(minHeight, startHeight + deltaY);
+      }
+
+      resizeWindow(win.id, newWidth, newHeight);
+    };
+
+    const handlePointerUp = () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
   };
 
   const windowVariants = {
@@ -371,6 +411,40 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
             {children}
           </div>
         </div>
+
+        {/* Premium Resize Handles */}
+        {!win.isMaximized && localSnap === 'none' && (
+          <>
+            {/* Right edge resizer */}
+            <div
+              className="absolute right-0 top-0 w-1.5 h-full cursor-e-resize z-40 select-none hover:bg-indigo-500/10 active:bg-indigo-500/20 transition-colors"
+              onPointerDown={(e) => handleResizeStart(e, 'e')}
+            />
+            {/* Bottom edge resizer */}
+            <div
+              className="absolute bottom-0 left-0 w-full h-1.5 cursor-s-resize z-40 select-none hover:bg-indigo-500/10 active:bg-indigo-500/20 transition-colors"
+              onPointerDown={(e) => handleResizeStart(e, 's')}
+            />
+            {/* Bottom-right corner resizer */}
+            <div
+              className="absolute bottom-0 right-0 z-50 w-5 h-5 cursor-se-resize flex items-end justify-end p-0.5 group/resize select-none"
+              onPointerDown={(e) => handleResizeStart(e, 'se')}
+            >
+              <svg
+                className="w-2.5 h-2.5 text-zinc-500/60 group-hover/resize:text-indigo-400 transition-colors pointer-events-none"
+                viewBox="0 0 10 10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+              >
+                <line x1="1" y1="9" x2="9" y2="1" />
+                <line x1="4" y1="9" x2="9" y2="4" />
+                <line x1="7" y1="9" x2="9" y2="7" />
+              </svg>
+            </div>
+          </>
+        )}
       </motion.div>
     </>
   );
