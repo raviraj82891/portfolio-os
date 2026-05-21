@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOS, WindowState } from '@/store/useOS';
 import { motion, AnimatePresence, useDragControls } from 'framer-motion';
 
@@ -22,7 +22,6 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
 
   const isActive = activeWindowId === win.id;
   const dragControls = useDragControls();
-  const constraintsRef = useRef<HTMLDivElement>(null);
   const [localSnap, setLocalSnap] = useState<'none' | 'left' | 'right'>('none');
   const [hoverSnap, setHoverSnap] = useState<'none' | 'left' | 'right' | 'top'>('none');
   const TASKBAR_H = 52;
@@ -238,16 +237,8 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
         )}
       </AnimatePresence>
 
-      {/* Invisible full-workspace boundary — Framer Motion uses this as the live drag constraint */}
-      <div
-        ref={constraintsRef}
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 0 }}
-      />
-
       <motion.div
         drag={!win.isMaximized && localSnap === 'none'}
-        dragConstraints={constraintsRef}
         dragControls={dragControls}
         dragListener={false}
         dragMomentum={false}
