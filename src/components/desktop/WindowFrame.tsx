@@ -24,6 +24,7 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
   const dragControls = useDragControls();
   const [localSnap, setLocalSnap] = useState<'none' | 'left' | 'right'>('none');
   const [hoverSnap, setHoverSnap] = useState<'none' | 'left' | 'right' | 'top'>('none');
+  const [isDragging, setIsDragging] = useState(false);
   const TASKBAR_H = 52;
   const [windowSize, setWindowSize] = useState({ width: 1280, height: 720 - 52 });
 
@@ -67,6 +68,7 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
 
   // Also used as onDragStart callback for the motion.div
   const handleDragStart = () => {
+    setIsDragging(true);
     focusWindow(win.id);
   };
 
@@ -89,10 +91,13 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
     if (hoverSnap === 'top') {
       maximizeWindow(win.id);
       setLocalSnap('none');
+      setIsDragging(false);
     } else if (hoverSnap === 'left') {
       setLocalSnap('left');
+      setIsDragging(false);
     } else if (hoverSnap === 'right') {
       setLocalSnap('right');
+      setIsDragging(false);
     } else {
       setLocalSnap('none');
       const dx = info.offset.x;
@@ -108,6 +113,11 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       const newX = Math.max(0, Math.min(win.x + dx, windowSize.width - MIN_VISIBLE_X));
       const newY = Math.max(0, Math.min(win.y + dy, windowSize.height - TITLE_BAR_H));
       moveWindow(win.id, newX, newY);
+
+      // Reset dragging after a tiny delay so the update re-renders instantly without spring bounce
+      setTimeout(() => {
+        setIsDragging(false);
+      }, 50);
     }
     setHoverSnap('none');
   };
@@ -129,12 +139,14 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       width: localSnap !== 'none' ? windowSize.width / 2 - 12 : win.isMaximized ? windowSize.width : win.width,
       // windowSize.height is already (viewport - taskbar). Maximized fills workspace; snapped has 8px top gap.
       height: localSnap !== 'none' ? windowSize.height - 8 : win.isMaximized ? windowSize.height : win.height,
-      transition: {
-        type: 'spring' as const,
-        stiffness: 260,
-        damping: 26,
-        mass: 0.9,
-      },
+      transition: isDragging
+        ? { type: 'tween' as const, duration: 0 }
+        : {
+            type: 'spring' as const,
+            stiffness: 260,
+            damping: 26,
+            mass: 0.9,
+          },
     },
     minimized: {
       scale: 0.12,

@@ -220,6 +220,7 @@ export default function DesktopEnvironment() {
           overflow: 'hidden',
           clipPath: 'inset(0 0 0 0)',
           contain: 'layout paint',
+          pointerEvents: 'none',  // container is click-through; windows set their own pointer-events
         }}
       >
         {windows.map((win) => (
