@@ -22,6 +22,7 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
 
   const isActive = activeWindowId === win.id;
   const dragControls = useDragControls();
+  const constraintsRef = useRef<HTMLDivElement>(null);
   const [localSnap, setLocalSnap] = useState<'none' | 'left' | 'right'>('none');
   const [hoverSnap, setHoverSnap] = useState<'none' | 'left' | 'right' | 'top'>('none');
   const TASKBAR_H = 52;
@@ -97,7 +98,17 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       setLocalSnap('none');
       const dx = info.offset.x;
       const dy = info.offset.y;
-      moveWindow(win.id, win.x + dx, win.y + dy);
+
+      // Clamp so the window can never escape the workspace:
+      //   top:   y >= 0           (title bar never above top edge)
+      //   left:  x >= 0           (window never past left edge)
+      //   right: at least 100px visible on screen
+      //   bottom: at least title bar (36px) stays above taskbar
+      const TITLE_BAR_H = 36;
+      const MIN_VISIBLE_X = 100;
+      const newX = Math.max(0, Math.min(win.x + dx, windowSize.width - MIN_VISIBLE_X));
+      const newY = Math.max(0, Math.min(win.y + dy, windowSize.height - TITLE_BAR_H));
+      moveWindow(win.id, newX, newY);
     }
     setHoverSnap('none');
   };
@@ -227,13 +238,21 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
         )}
       </AnimatePresence>
 
+      {/* Invisible full-workspace boundary — Framer Motion uses this as the live drag constraint */}
+      <div
+        ref={constraintsRef}
+        className="absolute inset-0 pointer-events-none"
+        style={{ zIndex: 0 }}
+      />
+
       <motion.div
         drag={!win.isMaximized && localSnap === 'none'}
+        dragConstraints={constraintsRef}
         dragControls={dragControls}
         dragListener={false}
-        dragMomentum={true}
-        dragElastic={0.06}
-        dragTransition={{ bounceStiffness: 480, bounceDamping: 28, power: 0.12 }}
+        dragMomentum={false}
+        dragElastic={0.02}
+        dragTransition={{ bounceStiffness: 600, bounceDamping: 40, power: 0 }}
         onDragStart={handleDragStart}
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
