@@ -81,7 +81,7 @@ export default function DesktopEnvironment() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1.2 }}
     >
-      {/* Video Wallpaper */}
+      {/* Video Wallpaper — full quality, 100% opacity */}
       <video
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         src="https://cdn.pixabay.com/video/2023/08/04/174588-851804340_large.mp4"
@@ -92,36 +92,14 @@ export default function DesktopEnvironment() {
         style={{ zIndex: 0 }}
       />
 
-      {/* Dark overlay — keeps UI readable over the video */}
+      {/* Thin bottom vignette only — keeps taskbar text legible */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           zIndex: 1,
-          background: 'linear-gradient(180deg, rgba(4,4,12,0.55) 0%, rgba(4,4,12,0.45) 60%, rgba(4,4,12,0.62) 100%)',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 18%)',
         }}
       />
-      {/* Ambient colour orbs — subtle accent layer over the video */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 2 }}>
-        <motion.div
-          className="absolute w-[800px] h-[800px] rounded-full opacity-[0.025]"
-          style={{ background: 'radial-gradient(circle, #6366f1, transparent 70%)', top: '5%', right: '-15%' }}
-          animate={{ x: [0, 25, 0], y: [0, -15, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-        />
-        <motion.div
-          className="absolute w-[650px] h-[650px] rounded-full opacity-[0.018]"
-          style={{ background: 'radial-gradient(circle, #8b5cf6, transparent 70%)', bottom: '10%', left: '-10%' }}
-          animate={{ x: [0, -15, 0], y: [0, 20, 0] }}
-          transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        />
-        {/* Edge vignette */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(4,4,12,0.5) 100%)'
-          }}
-        />
-      </div>
 
       {/* Particles */}
       <Particles />
