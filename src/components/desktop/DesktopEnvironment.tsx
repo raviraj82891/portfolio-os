@@ -105,7 +105,7 @@ export default function DesktopEnvironment() {
       <Particles />
 
       {/* Desktop Icons — iOS-style vertical stack layout */}
-      <div className="absolute top-4 left-4 flex flex-col gap-0.5 z-10">
+      <div className="absolute top-4 left-4 flex flex-col gap-0.5 z-[5]">
         {desktopIcons.map((icon, i) => (
           <motion.button
             key={icon.id}
@@ -216,6 +216,7 @@ export default function DesktopEnvironment() {
         className="absolute inset-0"
         style={{
           bottom: '52px',
+          zIndex: 20,
           overflow: 'hidden',
           clipPath: 'inset(0 0 0 0)',
           contain: 'layout paint',
