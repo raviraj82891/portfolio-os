@@ -57,7 +57,7 @@ export default function Taskbar() {
         borderTop: '1px solid rgba(255, 255, 255, 0.06)',
       }}>
         {/* Left — App Icons */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1.5 shrink-0">
           {/* Logo */}
           <div
             className="px-3 py-1.5 rounded-lg text-xs font-semibold mr-1"
@@ -70,7 +70,7 @@ export default function Taskbar() {
             ◆ ROS
           </div>
 
-          <div className="w-px h-6 bg-white/[0.06] mx-1.5" />
+          <div className="w-px h-6 bg-white/[0.06] mx-1.5 shrink-0" />
 
           {/* Dock Icons */}
           {DOCK_APPS.map((app) => {
@@ -78,7 +78,7 @@ export default function Taskbar() {
             return (
               <motion.button
                 key={app.id}
-                className="dock-icon relative px-2 py-1.5 rounded-lg text-sm transition-all hover:bg-white/[0.06]"
+                className="dock-icon relative px-2 py-1.5 rounded-lg text-sm transition-all hover:bg-white/[0.06] shrink-0"
                 whileTap={{ scale: 0.92 }}
                 onClick={() => {
                   const existing = windows.find(w => w.appId === app.id);
@@ -104,7 +104,7 @@ export default function Taskbar() {
             );
           })}
 
-          <div className="w-px h-6 bg-white/[0.06] mx-1.5" />
+          <div className="w-px h-6 bg-white/[0.06] mx-1.5 shrink-0" />
 
           {/* Social Links */}
           {SOCIAL_LINKS.map((link) => (
@@ -113,7 +113,7 @@ export default function Taskbar() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="dock-icon px-1.5 py-1 rounded-lg text-sm hover:bg-white/[0.06] transition-all"
+              className="dock-icon px-1.5 py-1 rounded-lg text-sm hover:bg-white/[0.06] transition-all shrink-0"
               whileHover={{ y: -3 }}
               whileTap={{ scale: 0.92 }}
               title={link.label}
@@ -124,7 +124,7 @@ export default function Taskbar() {
         </div>
 
         {/* Center — Active Windows */}
-        <div className="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
+        <div className="flex items-center gap-1.5 absolute left-1/2 -translate-x-1/2">
           {windows.filter(w => !w.isClosing).map(w => (
             <button
               key={w.id}

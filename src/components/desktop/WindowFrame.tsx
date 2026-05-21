@@ -133,20 +133,18 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
       opacity: 1,
       scale: 1,
       filter: 'blur(0px)',
-      y: 0,
       x: localSnap === 'left' ? 8 : localSnap === 'right' ? windowSize.width / 2 + 4 : win.isMaximized ? 0 : win.x,
-      top: localSnap !== 'none' ? 8 : win.isMaximized ? 0 : win.y,
+      y: localSnap !== 'none' ? 8 : win.isMaximized ? 0 : win.y,
       width: localSnap !== 'none' ? windowSize.width / 2 - 12 : win.isMaximized ? windowSize.width : win.width,
-      // windowSize.height is already (viewport - taskbar). Maximized fills workspace; snapped has 8px top gap.
       height: localSnap !== 'none' ? windowSize.height - 8 : win.isMaximized ? windowSize.height : win.height,
       transition: isDragging
         ? { type: 'tween' as const, duration: 0 }
         : {
-            type: 'spring' as const,
-            stiffness: 260,
-            damping: 26,
-            mass: 0.9,
-          },
+          type: 'spring' as const,
+          stiffness: 260,
+          damping: 26,
+          mass: 0.9,
+        },
     },
     minimized: {
       scale: 0.12,
@@ -176,8 +174,8 @@ export default function WindowFrame({ window: win, children }: WindowFrameProps)
   const currentVariant = win.isClosing
     ? 'exit'
     : win.isMinimized
-    ? 'minimized'
-    : 'visible';
+      ? 'minimized'
+      : 'visible';
 
   const getSnapPreviewStyle = (snap: 'none' | 'left' | 'right' | 'top') => {
     // windowSize.height = workspace height (viewport minus taskbar)
